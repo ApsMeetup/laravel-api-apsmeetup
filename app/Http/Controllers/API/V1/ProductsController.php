@@ -4,9 +4,9 @@ namespace APSMeetup\Http\Controllers\API\V1;
 
 use APSMeetup\Http\Resources\ProductsResource;
 use APSMeetup\Models\Product;
-use Illuminate\Http\Request;
 use APSMeetup\Http\Controllers\Controller;
 use Illuminate\Http\Response;
+use APSMeetup\Http\Requests\ProductRequest;
 
 class ProductsController extends Controller
 {
@@ -27,22 +27,21 @@ class ProductsController extends Controller
      */
     public function index()
     {
-        return ProductsResource::collection(Product::all());
+        return ProductsResource::collection($this->product->all());
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \APSMeetup\Http\Requests\ProductRequest $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(ProductRequest $request)
     {
         $this->product->fill($request->all());
         $this->product->save();
 
-        $product = $this->product;
-        $resource = new ProductsResource($product);
+        $resource = new ProductsResource($this->product);
 
         return $resource->response()->setStatusCode(Response::HTTP_CREATED);
     }
@@ -55,22 +54,22 @@ class ProductsController extends Controller
      */
     public function show(Product $product)
     {
-        return new ProductsResource($product);
+        $resource = new ProductsResource($product);
+
+        return $resource->response()->setStatusCode(Response::HTTP_OK);
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request $request
+     * @param  \APSMeetup\Http\Requests\ProductRequest $request
      * @param  \APSMeetup\Models\Product $product
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Product $product)
+    public function update(ProductRequest $request, Product $product)
     {
-        $this->product->fill($request->all());
-        $this->product->save();
+        $product->update($request->all());
 
-        $product = $this->product;
         $resource = new ProductsResource($product);
 
         return $resource->response()->setStatusCode(Response::HTTP_OK);
@@ -86,6 +85,6 @@ class ProductsController extends Controller
     {
         $product->delete();
 
-        return response()->json(['message' => 'Register deleted'], Response::HTTP_OK);
+        return response()->json(['data' => ['message' => 'register deleted']], Response::HTTP_OK);
     }
 }

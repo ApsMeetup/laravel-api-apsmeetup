@@ -4,6 +4,10 @@ namespace APSMeetup\Exceptions;
 
 use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use \Illuminate\Database\Eloquent\ModelNotFoundException;
+use \Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Illuminate\Http\Response;
+use \Illuminate\Validation\ValidationException;
 
 class Handler extends ExceptionHandler
 {
@@ -42,12 +46,31 @@ class Handler extends ExceptionHandler
     /**
      * Render an exception into an HTTP response.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request $request
      * @param  \Exception  $exception
      * @return \Illuminate\Http\Response
      */
     public function render($request, Exception $exception)
     {
+        if ($exception instanceof ModelNotFoundException) {
+            return response()->json([
+                'data' => ['message' => 'record not found']
+            ], Response::HTTP_NOT_FOUND);
+        }
+
+        if ($exception instanceof NotFoundHttpException) {
+            return response()->json([
+                'data' => ['message' => 'URL not found']
+            ], Response::HTTP_NOT_FOUND);
+        }
+
+        if ($exception instanceof ValidationException) {
+            return response()->json([
+                'data' => ['message' => $exception->getMessage(),
+                'errors' => $exception->errors()]
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
         return parent::render($request, $exception);
     }
 }
