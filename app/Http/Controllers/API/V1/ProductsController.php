@@ -85,6 +85,6 @@ class ProductsController extends Controller
     {
         $product->delete();
 
-        return response()->json(['data' => ['message' => 'register deleted']], Response::HTTP_OK);
+        return response()->json(['data' => ['message' => 'Register deleted']], Response::HTTP_OK);
     }
 }
