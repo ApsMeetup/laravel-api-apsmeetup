@@ -28,7 +28,7 @@ class ProductRequest extends FormRequest
         if ($this->isMethod('PUT') || $this->isMethod('PATCH')) {
             $id = $this->product->id;
         }
-        //dd([$this->request, $id]);
+
         return [
             'name' => "required|unique:products,name,{$id},id",
             'description' => 'required|max:100',
