@@ -41,6 +41,12 @@ class Handler extends ExceptionHandler
      */
     public function report(Exception $exception)
     {
+        if ($exception instanceof MethodNotAllowedException) {
+            return response()->json([
+                'data' => ['message' => 'Method not allowed']
+            ], Response::HTTP_METHOD_NOT_ALLOWED);
+        }
+        
         parent::report($exception);
     }
 
