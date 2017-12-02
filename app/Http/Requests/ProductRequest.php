@@ -23,7 +23,7 @@ class ProductRequest extends FormRequest
      */
     public function rules()
     {
-        $id = '';
+        $id = 0;
 
         if ($this->isMethod('PUT') || $this->isMethod('PATCH')) {
             $id = $this->product->id;
